@@ -40,17 +40,38 @@ class UserController {
     }
 
     async login(req, res, next) {
-        const {email, password} = req.body
-        const user = await User.findOne({where: {email}})
-        if(!user) {
-            return next(ApiError.internal('User not found'))
+        try {
+            const {email, password} = req.body
+            const user = await User.findOne({where: {email}})
+            if(!user) {
+                return next(ApiError.internal('User not found'))
+            }
+            let comparePassword = bcrypt.compareSync(password, user.password)
+            if(!comparePassword) {
+                return next(ApiError.internal('Invalid password specified'))
+            }
+    
+            if(user.status === 'block'){
+                return next(ApiError.badRequest('User blocked'))
+            }
+            
+            await User.update({signIn: Date.now()}, {where: {email}})
+    
+            const token = generateJwt(user.id, user.email)
+            return res.json({token,
+                            user: {
+                                id: user.id,
+                                email: user.email,
+                                name: user.name,
+                                signUp: user.signUp,
+                                signIn: user.signIn,
+                                status: user.status,
+            }})            
+        } catch (e) {
+            return next(ApiError.internal('Server error'))
         }
-        let comparePassword = bcrypt.compareSync(password, user.password)
-        if(!comparePassword) {
-            return next(ApiError.internal('Invalid password specified'))
-        }
-        const token = generateJwt(user.id, user.email)
-        return res.json({token})
+
+        
     }
 
     async check(req, res, next) {
