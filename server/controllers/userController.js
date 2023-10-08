@@ -13,29 +13,49 @@ const generateJwt = (id, email) => {
 
 class UserController {
     async registration(req, res, next) {
-        const {name, email, password} = req.body
-        if(!email || !password || !name) {
-            return next(ApiError.badRequest('Incorrect input'))
-        }
-        const candidate = await User.findOne({where: {email}})
-        if(candidate) {
-            return next(ApiError.badRequest(`User with email ${email} already exists`))
-        }
+        try {
+            const {name, email, password} = req.body
 
-        const hashPassword = await bcrypt.hash(password, 5)
-        const user = await User.create({name, email, password: hashPassword})
-        const token = generateJwt(user.id, email)
-        
+            if(!isValidEmail(email)) {
+                return next(ApiError.badRequest('Invalid email'));
+            }
+
+            if(password.length < 1 || password.length > 20) {
+                return next(ApiError.badRequest('Password must be between 1 and 20 characters'));
+            }
+
+            const candidate = await User.findOne({where: {email}})
+            if(candidate) {
+                return next(ApiError.badRequest(`User with email ${email} already exists`))
+            }
+
+            const hashPassword = await bcrypt.hash(password, 5)
+            const user = await User.create({name, email, password: hashPassword})
+            const token = generateJwt(user.id, email)
+            
+            return res.json({token})
+        } catch (e) {
+            return next(ApiError.internal('Server error'))
+        }
+    }
+
+    async login(req, res, next) {
+        const {email, password} = req.body
+        const user = await User.findOne({where: {email}})
+        if(!user) {
+            return next(ApiError.internal('User not found'))
+        }
+        let comparePassword = bcrypt.compareSync(password, user.password)
+        if(!comparePassword) {
+            return next(ApiError.internal('Invalid password specified'))
+        }
+        const token = generateJwt(user.id, user.email)
         return res.json({token})
     }
 
-    async login(req, res) {
-        
-    }
-
-    async check(req, res) {
-        const query = req.query
-        res.json(query)
+    async check(req, res, next) {
+        const token = generateJwt(req.user.id, req.user.email)
+        return res.json({token})
     }
 }
 
