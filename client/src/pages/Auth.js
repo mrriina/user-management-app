@@ -1,25 +1,30 @@
 import React, {useContext, useState} from 'react';
 import {Button, Card, Container, Form, Row} from 'react-bootstrap';
-import {NavLink, useLocation} from 'react-router-dom';
-import {LOGIN_ROUTE, REGISTRATION_ROUTE} from '../utils/consts';
+import {NavLink, useLocation, useNavigate} from 'react-router-dom';
+import {LOGIN_ROUTE, REGISTRATION_ROUTE, USER_ROUTE} from '../utils/consts';
 import { login, registration } from '../http/userAPI';
+import {observer} from "mobx-react-lite";
 
 
 const Auth = () => {
     const location = useLocation()
+    const navigate = useNavigate()
     const isLogin = location.pathname === LOGIN_ROUTE
+    const [name, setName] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
 
     const buttonClickHandler = async () => {
+        let data;
         if(isLogin) {
-            const response = await login();
+            data = await login(email, password);
         } else {
-            const name = 'testName'
-            const response = await registration(email, password, name);
-            console.log('response= ', response);
+            data = await registration(email, password, name);
         }
-        
+        if(sessionStorage.getItem('tokenUser')) {
+            navigate(USER_ROUTE)
+        }
+
     }
 
     return (
@@ -30,6 +35,14 @@ const Auth = () => {
             <Card style={{width: 600}} className="p-5">
                 <h2 className="m-auto">{isLogin ? 'Log in' : 'Sign up'}</h2>
                 <Form className="d-flex flex-column">
+                    {isLogin ? null :
+                    <Form.Control
+                        className="mt-3"
+                        placeholder="Name" 
+                        value={name}
+                        onChange={e => setName(e.target.value)}
+                    />
+                    }
                     <Form.Control
                         className="mt-3"
                         placeholder="Email" 
