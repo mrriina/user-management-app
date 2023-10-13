@@ -34,7 +34,7 @@ const UserPage = () => {
             const data = await getUserById(sessionStorage.getItem('userId'));
             if(!data || data.user.status === 'blocked') {
                 message.error("Something went wrong. You have been deleted or blocked.")
-                logout()
+                await logout()
             } else {
                 setCurrentUser(data.user);
             }
@@ -72,7 +72,8 @@ const UserPage = () => {
 
 
     const checkAllSelectedHandler = async () => {
-        checkAll ? setCheckAll(false) : setCheckAll(true);
+        checkAll ? setCheckAll(false) : setCheckAll(true)
+
 
 
 
