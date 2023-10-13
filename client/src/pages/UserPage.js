@@ -62,6 +62,7 @@ const UserPage = () => {
     
 
     const changeSelectedRows = (id) => {
+
         setSelectedRows(
             selectedRows.includes(id) ?
             selectedRows.filter((r) => r !== id) :
@@ -70,18 +71,35 @@ const UserPage = () => {
     }
 
 
+    const checkAllSelectedHandler = async () => {
+        // setSelectedRows([])
+        
+        Promise.all(users.map((user) => {
+            if(!selectedRows.includes(user.id)) {
+                setSelectedRows([...selectedRows, user.id])
+            }
+        }))
+
+        // await users.forEach((user) => {
+        //     if(!selectedRows.includes(user.id)) {
+        //         setSelectedRows([...selectedRows, user.id])
+        //     }
+        // })
+    }
+
+
     const updateStatus = async (status) => {
         try {
             await getCurrentUser()
             setLoader(true);
-            checkAll ? 
-            await updateUsers(status) :
+            // checkAll ? 
+            // await updateUsers(status) :
             await selectedRows.forEach((rowId) => {
                 const resp = updateUserById(status, rowId)
                 
             })
             message.success("Users status updated successfully")
-            if(selectedRows.includes(currentUser.id)) {
+            if(selectedRows.includes(currentUser.id) && status === 'blocked') {
                 message.warning("You blocked yourself")
                 logout()
             }
@@ -146,7 +164,7 @@ const UserPage = () => {
                 <tr>
                     <th>
                         <Form>
-                            <Form.Check type={'checkbox'} id={`default-checkbox`} checked={checkAll} onChange={() => setCheckAll(!checkAll)}/>
+                            <Form.Check type={'checkbox'} id={`default-checkbox`} checked={checkAll} onChange={() => checkAllSelectedHandler()}/>
                         </Form>
                     </th>
                     <th>Id</th>
