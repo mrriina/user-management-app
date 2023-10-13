@@ -5,6 +5,7 @@ import User from '../components/User'
 import {DeleteOutlined, LockOutlined, UnlockOutlined} from "@ant-design/icons";
 import {useNavigate} from 'react-router-dom';
 import {LOGIN_ROUTE, REGISTRATION_ROUTE, USER_ROUTE} from '../utils/consts';
+import {message} from "antd";
 
 
 
@@ -30,9 +31,14 @@ const UserPage = () => {
         try {
             if(!sessionStorage.getItem('tokenUser')) logout()
             setLoader(true);
-          const data = await getUserById(sessionStorage.getItem('userId'));
-          console.log('getCurrentUser--data= ', data);
-          !data || data.user.status === 'blocked' ? logout() : setCurrentUser(data.user);
+            const data = await getUserById(sessionStorage.getItem('userId'));
+            if(!data || data.user.status === 'blocked') {
+                message.error("Something went wrong. You have been deleted or blocked.")
+                logout()
+            } else {
+                setCurrentUser(data.user);
+            }
+            
           
         } catch (e) {
           console.log('Error: ', e);
@@ -65,35 +71,53 @@ const UserPage = () => {
 
 
     const updateStatus = async (status) => {
-        getCurrentUser()
-        // if(!sessionStorage.getItem('tokenUser')) logout()
-        setLoader(true);
-        checkAll ? 
-        await updateUsers(status) :
-        await selectedRows.forEach((rowId) => {
-            const resp = updateUserById(status, rowId)
-        })
-        if(selectedRows.includes(currentUser.id)) logout()
-        fetchUsersData()
-        setSelectedRows([])
-        setCheckAll(false)
-        setLoader(false);
+        try {
+            await getCurrentUser()
+            setLoader(true);
+            checkAll ? 
+            await updateUsers(status) :
+            await selectedRows.forEach((rowId) => {
+                const resp = updateUserById(status, rowId)
+                
+            })
+            message.success("Users status updated successfully")
+            if(selectedRows.includes(currentUser.id)) {
+                message.warning("You blocked yourself")
+                logout()
+            }
+            fetchUsersData()
+            setSelectedRows([])
+            setCheckAll(false)
+            setLoader(false);
+        } catch (e) {
+            message.error("Something went wrong.")
+        }
+        
     }
 
 
     const deleteUser = async () => {
-        if(!sessionStorage.getItem('tokenUser')) logout()
-        setLoader(true);
-        checkAll ? 
-        await deleteUsers() :
-        await selectedRows.forEach((rowId) => {
-            const resp = deleteUserById(rowId)
-        })
-        if(selectedRows.includes(currentUser.id)) logout()
-        await fetchUsersData()
-        setSelectedRows([])
-        setCheckAll(false)
-        setLoader(false);
+        try {
+            await getCurrentUser()
+            setLoader(true);
+            checkAll ? 
+            await deleteUsers() :
+            await selectedRows.forEach((rowId) => {
+                const resp = deleteUserById(rowId)
+            })
+            message.success("Users deleted successfully")
+            if(selectedRows.includes(currentUser.id)) {
+                message.warning("You deleted yourself")
+                logout()
+            }
+            await fetchUsersData()
+            setSelectedRows([])
+            setCheckAll(false)
+            setLoader(false);
+        } catch (e) {
+            message.error("Something went wrong.")
+        }
+        
     }
 
     const logout = () => {
