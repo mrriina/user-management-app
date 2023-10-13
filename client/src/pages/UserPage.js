@@ -31,7 +31,8 @@ const UserPage = () => {
             if(!sessionStorage.getItem('tokenUser')) logout()
             setLoader(true);
           const data = await getUserById(sessionStorage.getItem('userId'));
-          !data ? logout() : setCurrentUser(data.user);
+          console.log('getCurrentUser--data= ', data);
+          !data || data.user.status === 'blocked' ? logout() : setCurrentUser(data.user);
           
         } catch (e) {
           console.log('Error: ', e);

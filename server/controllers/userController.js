@@ -68,10 +68,10 @@ class UserController {
                 return res.status(400).json({message: `Invalid password specified`})
             }
     
-            if(user.status === 'blocked'){
-                // return next(ApiError.badRequest('User blocked'))
-                return res.status(400).json({message: 'User blocked'})
-            }
+            // if(user.status === 'blocked'){
+            //     // return next(ApiError.badRequest('User blocked'))
+            //     return res.status(400).json({message: 'User blocked'})
+            // }
             
             await User.update({signIn: Date.now()}, {where: {email}})
     
@@ -93,7 +93,8 @@ class UserController {
     }
 
     async check(req, res, next) {
-        const token = generateJwt(req.user.id, req.user.email)
+        const {token} = req.body
+        const user = await User.findOne({where: {email}})
         return res.json({token})
     }
 
