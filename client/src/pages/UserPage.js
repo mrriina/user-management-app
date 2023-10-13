@@ -31,7 +31,8 @@ const UserPage = () => {
             if(!sessionStorage.getItem('tokenUser')) logout()
             setLoader(true);
           const data = await getUserById(sessionStorage.getItem('userId'));
-          setCurrentUser(data.user);
+          !data ? logout() : setCurrentUser(data.user);
+          
         } catch (e) {
           console.log('Error: ', e);
         } finally {
@@ -63,7 +64,8 @@ const UserPage = () => {
 
 
     const updateStatus = async (status) => {
-        if(!sessionStorage.getItem('tokenUser')) logout()
+        getCurrentUser()
+        // if(!sessionStorage.getItem('tokenUser')) logout()
         setLoader(true);
         checkAll ? 
         await updateUsers(status) :
