@@ -17,20 +17,21 @@ class UserController {
         try {
             const {name, email, password} = req.body
 
-            const {valid} = await emailValidator.validate(email)
+
+            // const {valid} = await emailValidator.validate(email)
 
             // if(!valid) {
             //     return next(ApiError.badRequest(`Incorrect email`));
             // }
 
+            
+
             if(password.length < 1 || password.length > 20) {
-                // return next(ApiError.badRequest('Password must be between 1 and 20 characters'));
                 return res.status(400).json({message: 'Password must be between 1 and 20 characters'})
             }
 
             const candidate = await User.findOne({where: {email}})
             if(candidate) {
-                // return next(ApiError.badRequest(`User with email ${email} already exists`))
                 return res.status(400).json({message: `User with email ${email} already exists`})
             }
 
@@ -49,7 +50,6 @@ class UserController {
                             }
             })            
         } catch (e) {
-            // return next(ApiError.internal(`Server error: ${e.message}`))
             return res.status(400).json({message: `Server error: ${e.message}`})
         }
     }
@@ -59,19 +59,12 @@ class UserController {
             const {email, password} = req.body
             const user = await User.findOne({where: {email}})
             if(!user) {
-                // return next(ApiError.internal('User not found'))
                 return res.status(400).json({message: `User with email ${email} not found`})
             }
             let comparePassword = bcrypt.compareSync(password, user.password)
             if(!comparePassword) {
-                // return next(ApiError.internal('Invalid password specified'))
                 return res.status(400).json({message: `Invalid password specified`})
             }
-    
-            // if(user.status === 'blocked'){
-            //     // return next(ApiError.badRequest('User blocked'))
-            //     return res.status(400).json({message: 'User blocked'})
-            // }
             
             await User.update({signIn: Date.now()}, {where: {email}})
     
@@ -87,7 +80,6 @@ class UserController {
                             }
             })            
         } catch (e) {
-            // return next(ApiError.internal('Server error'))
             return res.status(500).json({message: 'Server error'})
         }
     }
@@ -103,12 +95,10 @@ class UserController {
         try {
             const users = await User.findAll()
             if(!users) {
-                // return next(ApiError.internal('Users not found'))
                 return res.status(500).json({message: 'Users not found'})
             }
             return res.json({users})
         } catch (e) {
-            // return next(ApiError.internal('Server error'))
             return res.status(500).json({message: 'Server error'})
         }
     }
@@ -119,12 +109,10 @@ class UserController {
             const _id = req.params.id;
             const user = await User.findOne({where: {id: _id}})
             if(!user) {
-                // return next(ApiError.internal('User with this id not found'))
                 return res.status(500).json({message: 'User with this id not found'})
             }
             return res.json({user})
         } catch (e) {
-            // return next(ApiError.internal('Server error'))
             return res.status(500).json({message: 'Server error'})
         }
     }
@@ -136,7 +124,6 @@ class UserController {
             
             return res.json({message: 'All users have been successfully deleted'})
         } catch (e) {
-            // return next(ApiError.internal('Server error'))
             return res.status(500).json({message: 'Server error'})
         }
     }
@@ -147,13 +134,11 @@ class UserController {
             const _id = req.params.id
             const user = await User.findOne({where: {id: _id}})
             if(!user) {
-                // return next(ApiError.internal('User with this id not found'))
                 return res.status(500).json({message: 'User with this id not found'})
             }
             await User.destroy({where: {id: _id}})
             return res.json({message: 'The user has been successfully deleted'})
         } catch (e) {
-            // return next(ApiError.internal('Server error'))
             return res.status(500).json({message: 'Server error'})
         }
     }
@@ -166,7 +151,6 @@ class UserController {
             
             return res.json({message: 'All users have been successfully updated'})
         } catch (e) {
-            // return next(ApiError.internal(`Server error, e= ${e.message}`))
             return res.status(500).json({message: 'Server error'})
         }
     }
@@ -179,14 +163,12 @@ class UserController {
             const user = User.findOne({where: {id: _id}})
 
             if(!user) {
-                // return next(ApiError.internal('User with this id not found'))
                 return res.status(500).json({message: 'User with this id not found'})
             }
             await User.update({status: status}, {where: {id: _id}})
             
             return res.json({message: 'User has been successfully updated'})
         } catch (e) {
-            // return next(ApiError.internal(`Server error: ${e.message}`))
             return res.status(500).json({message: 'Server error'})
         }
     }

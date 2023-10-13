@@ -4,6 +4,7 @@ import {NavLink, useLocation, useNavigate} from 'react-router-dom';
 import {LOGIN_ROUTE, REGISTRATION_ROUTE, USER_ROUTE} from '../utils/consts';
 import { login, registration } from '../http/userAPI';
 import {observer} from "mobx-react-lite";
+import {message} from "antd";
 
 
 const Auth = observer(() => {
@@ -13,21 +14,33 @@ const Auth = observer(() => {
     const [name, setName] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
-    const [message, setMessage] = useState('')
+    const [formMessage, setFormMessage] = useState('')
 
     const buttonClickHandler = async () => {
         try {
+            if(!email || email.length < 1 || !password) {
+                setFormMessage('Fill in all the fields')
+                return
+            }
+
             let data;
             if(isLogin) {
                 data = await login(email, password);
+                
             } else {
+                if(!name) {
+                    setFormMessage('Fill in all the fields')
+                    return
+                }
                 data = await registration(email, password, name);
+                message.success("The user has successfully registered!")
+                
             }
             if(sessionStorage.getItem('tokenUser')) {
                 navigate(USER_ROUTE)
             }
         } catch (e) {
-            setMessage(e.response.data.message)
+            setFormMessage(e.response.data.message)
         }
     }
 
@@ -63,7 +76,7 @@ const Auth = observer(() => {
                             value={password}
                             onChange={e => setPassword(e.target.value)}
                         />
-                        <p className="font-monospace text-danger">{message}</p>
+                        <p className="font-monospace text-danger">{formMessage}</p>
                         <div className="d-flex justify-content-between mt-3 pl-3 pr-3">
                             {isLogin ?
                                 <div>

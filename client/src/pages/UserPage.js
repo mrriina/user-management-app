@@ -72,19 +72,17 @@ const UserPage = () => {
 
 
     const checkAllSelectedHandler = async () => {
+        checkAll ? setCheckAll(false) : setCheckAll(true);
+
+
+
         // setSelectedRows([])
         
-        Promise.all(users.map((user) => {
-            if(!selectedRows.includes(user.id)) {
-                setSelectedRows([...selectedRows, user.id])
-            }
-        }))
-
-        // await users.forEach((user) => {
+        // Promise.all(users.map((user) => {
         //     if(!selectedRows.includes(user.id)) {
         //         setSelectedRows([...selectedRows, user.id])
         //     }
-        // })
+        // }))
     }
 
 
