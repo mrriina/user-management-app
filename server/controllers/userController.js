@@ -80,8 +80,9 @@ class UserController {
                             }
             })            
         } catch (e) {
-            // вернуть потом это ---->  return res.status(500).json({message: 'Server error'})
-            return res.status(500).json({message: e})
+            // return res.status(500).json({message: 'Server error'})
+            return res.status(500).json({message: e.response.data.message})
+            
         }
     }
 
