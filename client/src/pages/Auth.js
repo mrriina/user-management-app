@@ -1,10 +1,11 @@
 import React, {useContext, useState} from 'react';
-import {Button, Card, Container, Form, Row} from 'react-bootstrap';
+import {Button, Card, Container, Form, Row, Image } from 'react-bootstrap';
 import {NavLink, useLocation, useNavigate} from 'react-router-dom';
 import {LOGIN_ROUTE, REGISTRATION_ROUTE, USER_ROUTE} from '../utils/consts';
 import { login, registration } from '../http/userAPI';
 import {observer} from "mobx-react-lite";
 import {message} from "antd";
+import loginImage from '../static/login.png';
 
 
 const Auth = observer(() => {
@@ -47,12 +48,13 @@ const Auth = observer(() => {
     return (
         <div className='bg-light'>
             <Container
-                    className="d-flex justify-content-center align-items-center"
-                    style={{height: window.innerHeight - 54}}>
+                    className="d-flex justify-content-center align-items-center mt-4"
+                    >
                 
-                <Card style={{width: 600}} className="p-5">
+                <Card style={{width: 500}} className="p-5">
+                    <Image class="img-fluid" src={loginImage} />
                     <h2 className="m-auto">{isLogin ? 'Log in' : 'Sign up'}</h2>
-                    {/* <img src='../static/login.png' alt='login'></img> */}
+                    
                     <Form className="d-flex flex-column">
                         
                         {isLogin ? null :

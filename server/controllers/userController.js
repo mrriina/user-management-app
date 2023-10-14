@@ -11,18 +11,18 @@ const generateJwt = (id, email) => {
         {expiresIn: '1h'})
 }
 
+function isValidEmail(email) {
+    return /\S+@\S+\.\S+/.test(email);
+}
 
 class UserController {
     async registration(req, res, next) {
         try {
             const {name, email, password} = req.body
 
-
-            // const {valid} = await emailValidator.validate(email)
-
-            // if(!valid) {
-            //     return next(ApiError.badRequest(`Incorrect email`));
-            // }
+            if(!isValidEmail(email)) {
+                return res.status(400).json({message: 'Email is invalid'})
+            }
 
             
 

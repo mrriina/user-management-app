@@ -18,13 +18,21 @@ const UserPage = () => {
     const navigate = useNavigate()
 
     useEffect(() => {
-        checkAll ? setSelectedRows(users.map((u) => u.id)) : setSelectedRows([]);
+        if(checkAll) {
+            setSelectedRows(users.map((u) => u.id))
+        }
     }, [checkAll]);
 
     useEffect(() => {
         getCurrentUser();
         fetchUsersData();
     }, [])
+
+    useEffect(() => {
+        if(users){
+            selectedRows.length !== users.length ? setCheckAll(false) : setCheckAll(true);
+        }
+    }, [selectedRows]);
 
 
     const getCurrentUser = async () => {
@@ -62,7 +70,6 @@ const UserPage = () => {
     
 
     const changeSelectedRows = (id) => {
-
         setSelectedRows(
             selectedRows.includes(id) ?
             selectedRows.filter((r) => r !== id) :
@@ -71,19 +78,11 @@ const UserPage = () => {
     }
 
 
-    const checkAllSelectedHandler = async () => {
-        checkAll ? setCheckAll(false) : setCheckAll(true)
-
-
-
-
-        // setSelectedRows([])
-        
-        // Promise.all(users.map((user) => {
-        //     if(!selectedRows.includes(user.id)) {
-        //         setSelectedRows([...selectedRows, user.id])
-        //     }
-        // }))
+    const checkAllSelectedHandler = () => {
+        setCheckAll(!checkAll)
+        if(checkAll) {
+            setSelectedRows([])
+        }
     }
 
 
@@ -91,8 +90,9 @@ const UserPage = () => {
         try {
             await getCurrentUser()
             setLoader(true);
-            // checkAll ? 
-            // await updateUsers(status) :
+            
+            checkAll ? 
+            await updateUsers(status) :
             await selectedRows.forEach((rowId) => {
                 const resp = updateUserById(status, rowId)
                 
@@ -163,7 +163,7 @@ const UserPage = () => {
                 <tr>
                     <th>
                         <Form>
-                            <Form.Check type={'checkbox'} id={`default-checkbox`} checked={checkAll} onChange={() => checkAllSelectedHandler()}/>
+                            <Form.Check type={'checkbox'} id={`default-checkbox`} checked={checkAll} onChange={() => {checkAllSelectedHandler()}}/>
                         </Form>
                     </th>
                     <th>Id</th>
