@@ -137,10 +137,10 @@ const UserPage = () => {
         
     }
 
-    const logout = () => {
+    const logout = async () => {
         sessionStorage.removeItem("tokenUser")
         sessionStorage.removeItem("userId")
-        navigate(LOGIN_ROUTE)
+        await navigate(LOGIN_ROUTE)
     }
     
     return (
