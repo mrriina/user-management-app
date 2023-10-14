@@ -24,7 +24,7 @@ const UserPage = () => {
     useEffect(() => {
         getCurrentUser();
         fetchUsersData();
-    }, [])
+    }, [users])
 
     useEffect(() => {
         if(users){
