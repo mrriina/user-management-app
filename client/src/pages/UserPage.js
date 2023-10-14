@@ -24,7 +24,7 @@ const UserPage = () => {
     useEffect(() => {
         getCurrentUser();
         fetchUsersData();
-    }, [users])
+    }, [])
 
     useEffect(() => {
         if(users){
@@ -53,14 +53,14 @@ const UserPage = () => {
 
     const fetchUsersData = async () => {
         try {
-          setLoader(true);
-          setUsers(null)
-          const data = await getUsers();
-          setUsers(data.users);
+            setLoader(true);
+            setUsers(null)
+            const data = await getUsers();
+            setUsers(data.users);
         } catch (e) {
-          console.log('Error: ', e);
+            console.log('Error: ', e);
         } finally {
-          setLoader(false);
+            setLoader(false);
         }
     };
 
@@ -84,13 +84,20 @@ const UserPage = () => {
             await getCurrentUser()
             setLoader(true);
             
-            checkAll ? 
-            await updateUsers(status) :
-            await selectedRows.forEach((rowId) => {
-                const resp = updateUserById(status, rowId)
+            // checkAll ? 
+            // await updateUsers(status) :
+            // await selectedRows.forEach((rowId) => {
+            //     const resp = updateUserById(status, rowId)
                 
-            })
-            // await fetchUsersData()
+            // })
+
+            if (checkAll) {
+                await updateUsers(status);
+            } else {
+                await Promise.all(selectedRows.map((rowId) => updateUserById(status, rowId)));
+            }
+
+            await fetchUsersData()
             message.success("Users status updated successfully")
             if(selectedRows.includes(currentUser.id) && status === 'blocked') {
                 message.warning("You blocked yourself")
