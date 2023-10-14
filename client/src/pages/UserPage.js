@@ -83,13 +83,6 @@ const UserPage = () => {
         try {
             await getCurrentUser()
             setLoader(true);
-            
-            // checkAll ? 
-            // await updateUsers(status) :
-            // await selectedRows.forEach((rowId) => {
-            //     const resp = updateUserById(status, rowId)
-                
-            // })
 
             if (checkAll) {
                 await updateUsers(status);
@@ -97,8 +90,8 @@ const UserPage = () => {
                 await Promise.all(selectedRows.map((rowId) => updateUserById(status, rowId)));
             }
 
-            await fetchUsersData()
             message.success("Users status updated successfully")
+            await fetchUsersData()
             if(selectedRows.includes(currentUser.id) && status === 'blocked') {
                 message.warning("You blocked yourself")
                 logout()
@@ -116,17 +109,19 @@ const UserPage = () => {
         try {
             await getCurrentUser()
             setLoader(true);
-            checkAll ? 
-            await deleteUsers() :
-            await selectedRows.forEach((rowId) => {
-                const resp = deleteUserById(rowId)
-            })
+
+            if (checkAll) {
+                await deleteUsers();
+            } else {
+                await Promise.all(selectedRows.map((rowId) => deleteUserById(rowId)));
+            }
+
             message.success("Users deleted successfully")
+            await fetchUsersData()
             if(selectedRows.includes(currentUser.id)) {
                 message.warning("You deleted yourself")
                 logout()
             }
-            await fetchUsersData()
             setSelectedRows([])
             setCheckAll(false)
             setLoader(false);
