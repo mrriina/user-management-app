@@ -4,10 +4,12 @@ const jwt = require('jsonwebtoken')
 const {User} = require('../models/user')
 const emailValidator = require('deep-email-validator')
 
+SECRET_KEY="secret_key123"
 
 const generateJwt = (id, email) => {
     return jwt.sign({id, email}, 
-        process.env.SECRET_KEY,
+        // process.env.SECRET_KEY,
+        SECRET_KEY,
         {expiresIn: '1h'})
 }
 
