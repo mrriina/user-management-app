@@ -3,7 +3,6 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const {User} = require('../models/user')
 const emailValidator = require('deep-email-validator')
-require('dotenv').config();
 
 
 const generateJwt = (id, email) => {
@@ -81,7 +80,8 @@ class UserController {
                             }
             })            
         } catch (e) {
-            return res.status(500).json({message: 'Server error'})
+            // вернуть потом это ---->  return res.status(500).json({message: 'Server error'})
+            return res.status(500).json({message: JSON.stringify(e)})
         }
     }
 
