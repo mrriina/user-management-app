@@ -54,6 +54,7 @@ const UserPage = () => {
     const fetchUsersData = async () => {
         try {
           setLoader(true);
+          setUsers(null)
           const data = await getUsers();
           setUsers(data.users);
         } catch (e) {
