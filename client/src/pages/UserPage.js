@@ -102,7 +102,7 @@ const UserPage = () => {
                 message.warning("You blocked yourself")
                 logout()
             }
-            fetchUsersData()
+            await fetchUsersData()
             setSelectedRows([])
             setCheckAll(false)
             setLoader(false);
