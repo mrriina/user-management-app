@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const {User} = require('../models/user')
 const emailValidator = require('deep-email-validator')
+require('dotenv').config();
 
 
 const generateJwt = (id, email) => {
