@@ -1,5 +1,5 @@
 const ApiError = require('../errors/ApiError')
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const {User} = require('../models/user')
 const emailValidator = require('deep-email-validator')
