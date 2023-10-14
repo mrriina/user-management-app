@@ -1,6 +1,5 @@
 import React from 'react';
-import { Container, ButtonGroup, Button, Table, Form, Spinner } from 'react-bootstrap';
-
+import { Form } from 'react-bootstrap';
 
 const User = (user) => {
     return (
@@ -19,7 +18,6 @@ const User = (user) => {
             <td>{user.status}</td>
         </tr>
         </>
-        
     );
 };
 

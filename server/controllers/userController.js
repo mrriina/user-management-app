@@ -2,13 +2,11 @@ const ApiError = require('../errors/ApiError')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const {User} = require('../models/user')
-const emailValidator = require('deep-email-validator')
 
 SECRET_KEY="secret_key123"
 
 const generateJwt = (id, email) => {
-    return jwt.sign({id, email}, 
-        // process.env.SECRET_KEY,
+    return jwt.sign({id, email},
         SECRET_KEY,
         {expiresIn: '1h'})
 }
@@ -18,15 +16,13 @@ function isValidEmail(email) {
 }
 
 class UserController {
-    async registration(req, res, next) {
+    async registration(req, res) {
         try {
             const {name, email, password} = req.body
 
             if(!isValidEmail(email)) {
                 return res.status(400).json({message: 'Email is invalid'})
             }
-
-            
 
             if(password.length < 1 || password.length > 20) {
                 return res.status(400).json({message: 'Password must be between 1 and 20 characters'})
@@ -39,7 +35,6 @@ class UserController {
 
             const hashPassword = await bcrypt.hash(password, 5)
             const user = await User.create({name, email, password: hashPassword})
-            console.log('process.env.SECRET_KEY==', process.env.SECRET_KEY);
             const token = generateJwt(user.id, email)
             
             return res.json({token,
@@ -57,7 +52,7 @@ class UserController {
         }
     }
 
-    async login(req, res, next) {
+    async login(req, res) {
         try {
             const {email, password} = req.body
             const user = await User.findOne({where: {email}})
@@ -83,20 +78,18 @@ class UserController {
                             }
             })            
         } catch (e) {
-            // return res.status(500).json({message: 'Server error'})
-            return res.status(500).json({message: e.response.data.message})
+            return res.status(500).json({message: 'Server error'})
             
         }
     }
 
-    async check(req, res, next) {
+    async check(req, res) {
         const {token} = req.body
         const user = await User.findOne({where: {email}})
         return res.json({token})
     }
 
-
-    async getUsers(req, res, next) {
+    async getUsers(req, res) {
         try {
             const users = await User.findAll()
             if(!users) {
@@ -108,8 +101,7 @@ class UserController {
         }
     }
 
-
-    async getUserById(req, res, next) {
+    async getUserById(req, res) {
         try {
             const _id = req.params.id;
             const user = await User.findOne({where: {id: _id}})
@@ -122,8 +114,7 @@ class UserController {
         }
     }
 
-
-    async deleteUsers(req, res, next) {
+    async deleteUsers(req, res) {
         try {
             await User.truncate()
             
@@ -133,8 +124,7 @@ class UserController {
         }
     }
 
-
-    async deleteUserById(req, res, next) {
+    async deleteUserById(req, res) {
         try {
             const _id = req.params.id
             const user = await User.findOne({where: {id: _id}})
@@ -148,8 +138,7 @@ class UserController {
         }
     }
 
-
-    async updateUsers(req, res, next) {
+    async updateUsers(req, res) {
         try {
             const {status} = req.body
             await User.update({status: status}, {where: {}})
@@ -160,8 +149,7 @@ class UserController {
         }
     }
 
-
-    async updateUserById(req, res, next) {
+    async updateUserById(req, res) {
         try {
             const {status} = req.body
             const _id = req.params.id

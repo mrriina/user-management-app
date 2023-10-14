@@ -2,28 +2,26 @@ import {$host} from './index';
 import jwt_decode from 'jwt-decode';
 
 export const registration = async (email, password, name) => {
-    const {data} = await $host.post('api/user/registration', {email, password, name})
-    sessionStorage.setItem('tokenUser', data.token)
-    sessionStorage.setItem('userId', data.user.id)
-    return jwt_decode(data.token)
+    try {
+        const {data} = await $host.post('api/user/registration', {email, password, name})
+        sessionStorage.setItem('tokenUser', data.token)
+        sessionStorage.setItem('userId', data.user.id)
+        return jwt_decode(data.token)
+    } catch (e) {
+        console.log('Error: ', e);
+    }
 }
 
 export const login = async (email, password) => {
-    const {data} = await $host.post('api/user/login', {email, password})
-    sessionStorage.setItem('tokenUser', data.token)
-    sessionStorage.setItem('userId', data.user.id)
-    // return jwt_decode(data.token)
-    return data
+    try {
+        const {data} = await $host.post('api/user/login', {email, password})
+        sessionStorage.setItem('tokenUser', data.token)
+        sessionStorage.setItem('userId', data.user.id)
+        return data
+    } catch (e) {
+        console.log('Error: ', e);
+    }
 }
-
-// export const check = async () => {
-//     const {data} = await $host.get('api/user/auth')
-//     sessionStorage.setItem('tokenUser', data.token)
-//     sessionStorage.setItem('userId', data.token.user.id)
-//     // return jwt_decode(data.token)
-//     return data
-// }
-
 
 export async function getUsers(){
     try {
@@ -34,7 +32,6 @@ export async function getUsers(){
     }
 }
 
-
 export async function getUserById(id){
     try {
         const {data} = await $host.get(`api/user/users/${id}`)
@@ -43,7 +40,6 @@ export async function getUserById(id){
         console.log('Error: ', e);
     }
 }
-
 
 export async function updateUserById(status, id){
     try {
@@ -54,7 +50,6 @@ export async function updateUserById(status, id){
     }
 }
 
-
 export async function updateUsers(status){
     try {
         const response = await $host.put(`api/user/users`, {status})
@@ -64,7 +59,6 @@ export async function updateUsers(status){
     }
 }
 
-
 export async function deleteUserById(id){
     try {
         const response = await $host.delete(`api/user/users/${id}`)
@@ -73,7 +67,6 @@ export async function deleteUserById(id){
         console.log('Error: ', e);
     }
 }
-
 
 export async function deleteUsers(){
     try {

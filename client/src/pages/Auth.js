@@ -1,12 +1,11 @@
-import React, {useContext, useState} from 'react';
-import {Button, Card, Container, Form, Row, Image } from 'react-bootstrap';
+import React, {useState} from 'react';
+import {Button, Card, Container, Form, Image } from 'react-bootstrap';
 import {NavLink, useLocation, useNavigate} from 'react-router-dom';
-import {LOGIN_ROUTE, REGISTRATION_ROUTE, USER_ROUTE} from '../utils/consts';
-import { login, registration } from '../http/userAPI';
 import {observer} from "mobx-react-lite";
 import {message} from "antd";
 import loginImage from '../static/login.png';
-
+import {LOGIN_ROUTE, REGISTRATION_ROUTE, USER_ROUTE} from '../utils/consts';
+import { login, registration } from '../http/userAPI';
 
 const Auth = observer(() => {
     const location = useLocation()
@@ -26,8 +25,7 @@ const Auth = observer(() => {
 
             let data;
             if(isLogin) {
-                data = await login(email, password);
-                
+                data = await login(email, password); 
             } else {
                 if(!name) {
                     setFormMessage('Fill in all the fields')
@@ -35,7 +33,6 @@ const Auth = observer(() => {
                 }
                 data = await registration(email, password, name);
                 message.success("The user has successfully registered!")
-                
             }
             if(sessionStorage.getItem('tokenUser')) {
                 navigate(USER_ROUTE)
@@ -48,15 +45,11 @@ const Auth = observer(() => {
     return (
         <div className='bg-light'>
             <Container
-                    className="d-flex justify-content-center align-items-center mt-4"
-                    >
-                
+                    className="d-flex justify-content-center align-items-center mt-4">
                 <Card style={{width: 500}} className="p-5">
                     <Image class="img-fluid" src={loginImage} />
                     <h2 className="m-auto">{isLogin ? 'Log in' : 'Sign up'}</h2>
-                    
-                    <Form className="d-flex flex-column">
-                        
+                    <Form className="d-flex flex-column"> 
                         {isLogin ? null :
                         <Form.Control
                             className="mt-3"
@@ -89,9 +82,6 @@ const Auth = observer(() => {
                                     Already have an account? <NavLink to={LOGIN_ROUTE}>Log in!</NavLink>
                                 </div>
                         }
-                            
-                            
-
                             <Button 
                                 variant={"outline-success"}
                                 onClick={buttonClickHandler}
@@ -101,8 +91,6 @@ const Auth = observer(() => {
                         </div>
                     </Form>
                 </Card>
-
-
             </Container>
         </div>
     );

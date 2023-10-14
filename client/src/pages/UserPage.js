@@ -4,10 +4,8 @@ import { getUsers, getUserById, updateUserById, updateUsers, deleteUsers, delete
 import User from '../components/User'
 import {DeleteOutlined, LockOutlined, UnlockOutlined} from "@ant-design/icons";
 import {useNavigate} from 'react-router-dom';
-import {LOGIN_ROUTE, REGISTRATION_ROUTE, USER_ROUTE} from '../utils/consts';
+import {LOGIN_ROUTE} from '../utils/consts';
 import {message} from "antd";
-
-
 
 const UserPage = () => {
     const [currentUser, setCurrentUser] = useState(null)
@@ -46,8 +44,6 @@ const UserPage = () => {
             } else {
                 setCurrentUser(data.user);
             }
-            
-          
         } catch (e) {
           console.log('Error: ', e);
         } finally {
@@ -65,9 +61,7 @@ const UserPage = () => {
         } finally {
           setLoader(false);
         }
-      };
-
-    
+    };
 
     const changeSelectedRows = (id) => {
         setSelectedRows(
@@ -77,14 +71,12 @@ const UserPage = () => {
         );
     }
 
-
     const checkAllSelectedHandler = () => {
         setCheckAll(!checkAll)
         if(checkAll) {
             setSelectedRows([])
         }
     }
-
 
     const updateStatus = async (status) => {
         try {
@@ -97,21 +89,20 @@ const UserPage = () => {
                 const resp = updateUserById(status, rowId)
                 
             })
+            await fetchUsersData()
             message.success("Users status updated successfully")
             if(selectedRows.includes(currentUser.id) && status === 'blocked') {
                 message.warning("You blocked yourself")
                 logout()
             }
-            await fetchUsersData()
+            
             setSelectedRows([])
             setCheckAll(false)
             setLoader(false);
         } catch (e) {
             message.error("Something went wrong.")
         }
-        
     }
-
 
     const deleteUser = async () => {
         try {
@@ -133,8 +124,7 @@ const UserPage = () => {
             setLoader(false);
         } catch (e) {
             message.error("Something went wrong.")
-        }
-        
+        }  
     }
 
     const logout = async () => {
@@ -145,61 +135,57 @@ const UserPage = () => {
     
     return (
         <div className='bg-light'>
-            
             <Container>
                 <div className='d-flex justify-content-between py-3'>
-                <ButtonGroup className='justify-content-end'>
-                    <Button disabled={selectedRows < 1} onClick={()=>updateStatus('blocked')} className="d-flex align-items-center btn-secondary active mr-1"><LockOutlined />Block</Button>
-                    <Button disabled={selectedRows < 1} onClick={()=>updateStatus('unblock')} className="d-flex align-items-center btn-secondary"><UnlockOutlined /></Button>
-                    <Button disabled={selectedRows < 1} onClick={()=>deleteUser()} className="d-flex align-items-center btn-danger"><DeleteOutlined /></Button>
-                </ButtonGroup>
-                {!isLoader && (<blockquote class="blockquote"><p>Hello, {currentUser.name}!</p></blockquote>)}
-                <Button onClick={()=>logout()} className="d-flex align-items-center" variant="outline-success">Log out</Button>
+                    <ButtonGroup className='justify-content-end'>
+                        <Button disabled={selectedRows < 1} onClick={()=>updateStatus('blocked')} className="d-flex align-items-center btn-secondary active mr-1"><LockOutlined />Block</Button>
+                        <Button disabled={selectedRows < 1} onClick={()=>updateStatus('unblock')} className="d-flex align-items-center btn-secondary"><UnlockOutlined /></Button>
+                        <Button disabled={selectedRows < 1} onClick={()=>deleteUser()} className="d-flex align-items-center btn-danger"><DeleteOutlined /></Button>
+                    </ButtonGroup>
+                    {!isLoader && (<blockquote class="blockquote"><p>Hello, {currentUser.name}!</p></blockquote>)}
+                    <Button onClick={()=>logout()} className="d-flex align-items-center" variant="outline-success">Log out</Button>
                 </div>
-                
-
-            <Table striped bordered hover>
-                <thead>
-                <tr>
-                    <th>
-                        <Form>
-                            <Form.Check type={'checkbox'} id={`default-checkbox`} checked={checkAll} onChange={() => {checkAllSelectedHandler()}}/>
-                        </Form>
-                    </th>
-                    <th>Id</th>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>SignUp date</th>
-                    <th>SignIn date</th>
-                    <th>Status</th>
-                </tr>
-                </thead>
-                <tbody>
-                { 
-                isLoader 
-                ? 
-                <tr><td colSpan={7}>
-                    <div className="text-center">
-                    <Spinner className='m-5' animation="border" variant="secondary" />
-                    </div>
-                </td></tr>
-                :
-                users && users.map((u) => <User key={u.id} 
-                                                        onchange={() => changeSelectedRows(u.id)} 
-                                                        checked={selectedRows.includes(u.id)}
-                                                        id={u.id} 
-                                                        name={u.name} 
-                                                        email={u.email} 
-                                                        dateSignUp={u.signUp.slice(0, 10)} 
-                                                        dateSignIn={u.signIn.slice(0,10)} 
-                                                        status={u.status}
-                                                    />)
-                }
-                </tbody>
-            </Table>
+                <Table striped bordered hover>
+                    <thead>
+                    <tr>
+                        <th>
+                            <Form>
+                                <Form.Check type={'checkbox'} id={`default-checkbox`} checked={checkAll} onChange={() => checkAllSelectedHandler()}/>
+                            </Form>
+                        </th>
+                        <th>Id</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>SignUp date</th>
+                        <th>SignIn date</th>
+                        <th>Status</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    { 
+                    isLoader 
+                    ? 
+                    <tr><td colSpan={7}>
+                        <div className="text-center">
+                        <Spinner className='m-5' animation="border" variant="secondary" />
+                        </div>
+                    </td></tr>
+                    :
+                    users && users.map((u) => <User key={u.id} 
+                                                            onchange={() => changeSelectedRows(u.id)} 
+                                                            checked={selectedRows.includes(u.id)}
+                                                            id={u.id} 
+                                                            name={u.name} 
+                                                            email={u.email} 
+                                                            dateSignUp={u.signUp.slice(0, 10)} 
+                                                            dateSignIn={u.signIn.slice(0,10)} 
+                                                            status={u.status}
+                                                        />)
+                    }
+                    </tbody>
+                </Table>
             </Container> 
         </div>
-        
     );
 };
 

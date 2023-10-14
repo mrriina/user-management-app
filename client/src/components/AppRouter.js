@@ -12,7 +12,6 @@ const AppRouter = () => {
             <Route path={REGISTRATION_ROUTE} element={<Auth/>} exact></Route>
             <Route path={USER_ROUTE} element={<UserPage/>} exact></Route>
         </Routes>
-        
     );
 };
 
