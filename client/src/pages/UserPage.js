@@ -90,7 +90,7 @@ const UserPage = () => {
                 const resp = updateUserById(status, rowId)
                 
             })
-            await fetchUsersData()
+            // await fetchUsersData()
             message.success("Users status updated successfully")
             if(selectedRows.includes(currentUser.id) && status === 'blocked') {
                 message.warning("You blocked yourself")
